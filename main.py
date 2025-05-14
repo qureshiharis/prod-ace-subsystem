@@ -8,8 +8,6 @@ from datetime import timezone
 
 from config import TAG_PAIRS, FETCH_INTERVAL, API_KEY
 from fetcher import fetch_sensor_data
-from detector import detect_anomalies_for_pair
-from notifier import alert
 
 from logger_config import setup_logger
 
