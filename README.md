@@ -85,7 +85,7 @@ Here’s a sample application YAML configuration:
 
 ```yaml
 name: ace-district-heating-1473
-version: "1.4"
+version: "1.5"
 services:
   - name: district-heating-1473
     mode: replicated
@@ -99,22 +99,18 @@ services:
         container-log-size: 100 MB
         container-log-archive: false
         shutdown-timeout: 10s
-        image: index.docker.io/topnot/prod-ace-subsystem:v1.3
+        image: index.docker.io/topnot/prod-ace-subsystem:v1.4
         env:
-          VOLGA_TOPIC: anomalies-heating
-          USE_GPIO: "false"
-          TAG_PAIRS: TAG PAIRS IN COMMA SEPARATED FORMAT
+          VOLGA_TOPIC: 1473-heating
+          TAG_PAIRS:
           SECRET_ID: ${SYS_APPROLE_SECRET_ID}
-          ROLE_ID: YOUR_ROLE_ID
-          LED_PIN: "18"
+          ROLE_ID: 
           FIXED_OFFSET: +02:00
           FETCH_INTERVAL: "300"
-          BUZZER_PIN: "23"
           BUFFER_HOURS: "4"
-          BASE_URL: YOUR_API_URL
-          API_KEY: YOUR_API_KEY
+          BASE_URL: 
+          API_KEY: 
           API_CA_CERT: ${SYS_API_CA_CERT}
-          ANOMALY_STD_MULTIPLIER: "3"
         approle: ace-anomaly-approle
         on-mounted-file-change:
           restart: true
@@ -122,7 +118,6 @@ services:
       outbound-access:
         allow-all: true
 on-mutable-variable-change: restart-service-instance
-
 ```
 
 ---
