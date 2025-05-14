@@ -51,7 +51,6 @@ class VolgaPublisher:
 logger = setup_logger(__name__)
 
 BUFFER_HOURS = int(os.getenv("BUFFER_HOURS", 4))
-OUTPUT_FILE = os.getenv("OUTPUT_FILE", "sensor")
 
 loop = asyncio.new_event_loop()
 asyncio.set_event_loop(loop)

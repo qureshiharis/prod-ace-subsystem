@@ -106,7 +106,6 @@ services:
           TAG_PAIRS: TAG PAIRS IN COMMA SEPARATED FORMAT
           SECRET_ID: ${SYS_APPROLE_SECRET_ID}
           ROLE_ID: YOUR_ROLE_ID
-          OUTPUT_FILE: heating
           LED_PIN: "18"
           FIXED_OFFSET: +02:00
           FETCH_INTERVAL: "300"
