@@ -1,0 +1,39 @@
+name: ace-district-heating-v
+version: "1.0"
+services:
+  - name: district-heating-v-subsystem
+    mode: replicated
+    replicas: 1
+    placement:
+      match-host-labels: function = heating
+    share-pid-namespace: false
+    containers:
+      - name: district-heating-v-container
+        mounts: []
+        container-log-size: 100 MB
+        container-log-archive: false
+        shutdown-timeout: 10s
+        image: index.docker.io/topnot/prod-ace-subsystem:v1.0
+        env:
+          VOLGA_TOPIC: anomalies-heating
+          USE_GPIO: "false"
+          TAG_PAIRS: 1473_04_AS01_VS01_GT101_CSP,1473_04_AS01_VS01_GT101_PV,1473_04_AS01_VV01_GT101_CSP,1473_04_AS01_VV01_GT101_PV
+          SECRET_ID: ${SYS_APPROLE_SECRET_ID}
+          ROLE_ID: ADD YOUR ROLE ID
+          OUTPUT_FILE: heating
+          LED_PIN: "18"
+          FIXED_OFFSET: +02:00
+          FETCH_INTERVAL: "300"
+          BUZZER_PIN: "23"
+          BUFFER_HOURS: "4"
+          BASE_URL: https://webport.it.pitea.se/api
+          API_KEY: ADD YOUR API KEY
+          API_CA_CERT: ${SYS_API_CA_CERT}
+          ANOMALY_STD_MULTIPLIER: "3"
+        approle: ace-anomaly-approle
+        on-mounted-file-change:
+          restart: true
+    network:
+      outbound-access:
+        allow-all: true
+on-mutable-variable-change: restart-service-instance
