@@ -74,7 +74,7 @@ def main():
         cutoff_time = pd.Timestamp.now(tz="Europe/Stockholm") - timedelta(hours=BUFFER_HOURS)
 
         for tag in TAG_PAIRS:
-            data = fetch_sensor_data(sp_tag, API_KEY, window_minutes=BUFFER_HOURS * 60)
+            data = fetch_sensor_data(tag, API_KEY, window_minutes=BUFFER_HOURS * 60)
             
             publish_sensor_data(json.dumps(data))
             logger.info(f"Published data for tag: {tag}")
