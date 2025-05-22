@@ -50,7 +50,7 @@ class VolgaPublisher:
 
     async def publish(self, payload_dict):
         await self.producer.produce(payload_dict)
-        logger.info(f"Published to Volga: {payload_dict}")
+        logger.info(f"Published to Volga")
 
 
 
