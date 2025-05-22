@@ -28,19 +28,25 @@ class VolgaPublisher:
         self.producer = None
 
     async def setup(self):
-        self.session = approle_login(
-            host='https://api.internal:4646',
-            role_id=self.role_id,
-            secret_id=self.secret_id
-        )
-        topic = Topic.local(self.topic_name)
-        opts = CreateOptions.create(fmt='json', persistence='disk', replication_factor=1)
-        self.producer = await Producer(
-            session=self.session,
-            topic=topic,
-            producer_name="inline-anomaly-publisher",
-            on_no_exists=opts
-        ).__aenter__()
+        try:
+            self.session = approle_login(
+                host='https://api.internal:4646',
+                role_id=self.role_id,
+                secret_id=self.secret_id
+            )
+            logger.info(f"[VolgaPublisher] Logged in successfully.")
+            topic = Topic.local(self.topic_name)
+            opts = CreateOptions.create(fmt='json', persistence='disk', replication_factor=1)
+            self.producer = await Producer(
+                session=self.session,
+                topic=topic,
+                producer_name="inline-anomaly-publisher",
+                on_no_exists=opts
+            ).__aenter__()
+            logger.info(f"[VolgaPublisher] Producer initialized on topic '{self.topic_name}'.")
+        
+        except Exception as e:
+            logger.error(f"[VolgaPublisher] Failed to initialize producer: {e}", exc_info=True)
 
     async def publish(self, payload_dict):
         await self.producer.produce(payload_dict)
