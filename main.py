@@ -6,7 +6,7 @@ import json
 import pytz
 from datetime import timezone
 
-from config import TAG_PAIRS, FETCH_INTERVAL, API_KEY
+from config import TAG_PAIRS, FETCH_INTERVAL, API_KEY, HISTORICAL_MODE, HISTORICAL_DATA_DURATION_MINUTES, HISTORICAL_DATA_FETCH_FREQUENCY_DAYS
 from fetcher import fetch_sensor_data
 
 from logger_config import setup_logger
@@ -18,6 +18,8 @@ from avassa_client.volga import Producer, Topic, CreateOptions
 role_id = os.getenv("ROLE_ID")
 secret_id = os.getenv("SECRET_ID")
 topic_name = os.getenv("VOLGA_TOPIC")
+
+last_historical_fetch = None
 
 class VolgaPublisher:
     def __init__(self, role_id, secret_id, topic_name):
@@ -76,9 +78,20 @@ def main():
 
         cutoff_time = pd.Timestamp.now(tz="Europe/Stockholm") - timedelta(hours=BUFFER_HOURS)
 
+         # Check if it's time to fetch historical data (every X days)
+        now = pd.Timestamp.now(tz="Europe/Stockholm")
+        # Publish historical data if that flag is set to true   
+        if HISTORICAL_MODE and (last_historical_fetch is None or (now - last_historical_fetch).days >= HISTORICAL_DATA_FETCH_FREQUENCY_DAYS):
+            logger.info("Performing weekly historical data fetch...")
+            for tag in TAG_PAIRS:
+                logger.info(f"Running in HISTORICAL MODE for tag {tag}")
+                data = fetch_sensor_data(tag, API_KEY, window_minutes=HISTORICAL_DATA_DURATION_MINUTES)
+                publish_sensor_data(json.dumps(data))
+            last_historical_fetch = now
+            logger.info(f"Published historical data for tag {tag}")
+
         for tag in TAG_PAIRS:
             data = fetch_sensor_data(tag, API_KEY, window_minutes=BUFFER_HOURS * 60)
-            
             publish_sensor_data(json.dumps(data))
             logger.info(f"Published data for tag: {tag}")
 
