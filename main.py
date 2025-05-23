@@ -19,8 +19,6 @@ role_id = os.getenv("ROLE_ID")
 secret_id = os.getenv("SECRET_ID")
 topic_name = os.getenv("VOLGA_TOPIC")
 
-last_historical_fetch = None
-
 class VolgaPublisher:
     def __init__(self, role_id, secret_id, topic_name):
         self.role_id = role_id
@@ -69,6 +67,8 @@ def publish_sensor_data(data):
 
 def main():
     global volga_publisher
+    global last_historical_fetch
+    last_historical_fetch = None
     volga_publisher = VolgaPublisher(role_id, secret_id, topic_name)
     loop.run_until_complete(volga_publisher.setup())
 
