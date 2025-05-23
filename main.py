@@ -86,7 +86,12 @@ def main():
             for tag in TAG_PAIRS:
                 logger.info(f"Running in HISTORICAL MODE for tag {tag}")
                 data = fetch_sensor_data(tag, API_KEY, window_minutes=HISTORICAL_DATA_DURATION_MINUTES)
-                publish_sensor_data(json.dumps(data))
+                
+                if data is not None:
+                    data["mode"] = "historical"
+                    publish_sensor_data(json.dumps(data))
+                else:
+                    logger.warning(f"Skipping tag {tag} due to fetch failure.")
             last_historical_fetch = now
             logger.info(f"Published historical data for tag {tag}")
 
