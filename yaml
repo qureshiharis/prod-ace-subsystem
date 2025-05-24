@@ -1,28 +1,31 @@
-name: ace-district-heating-1473
-version: "1.5"
+name: ace-1473-heating-hist
+version: "2.2"
 services:
-  - name: district-heating-1473
+  - name: 1473-heating-hist
     mode: replicated
     replicas: 1
     placement:
-      match-host-labels: function = heating
+      match-host-labels: function = ventilation
     share-pid-namespace: false
     containers:
-      - name: district-heating-v-container
+      - name: 1473-heating-hist-container
         mounts: []
         container-log-size: 100 MB
         container-log-archive: false
         shutdown-timeout: 10s
-        image: index.docker.io/topnot/prod-ace-subsystem:v1.4
+        image: index.docker.io/topnot/prod-ace-subsystem:v2.2
         env:
-          VOLGA_TOPIC: 1473-heating
-          TAG_PAIRS:
+          VOLGA_TOPIC: 1473-heating-99
+          TAG_PAIRS: 1473_04_AS01_VS01_GT300_PV,1473_04_AS01_VS01_GT101_CSP,1473_04_AS01_VS01_GT101_PV,1473_04_AS01_VV01_GT101_CSP,1473_04_AS01_VV01_GT101_PV
           SECRET_ID: ${SYS_APPROLE_SECRET_ID}
-          ROLE_ID: 
+          ROLE_ID: dbb4ec8a-bc2a-41a2-b13a-922da199c044
+          HISTORICAL_MODE: "true"
+          HISTORICAL_DATA_FETCH_FREQUENCY_DAYS: "7"
+          HISTORICAL_DATA_DURATION_MINUTES: "43200"
           FIXED_OFFSET: +02:00
           FETCH_INTERVAL: "300"
-          BUFFER_HOURS: "4"
-          BASE_URL: 
+          BUFFER_HOURS: "24"
+          BASE_URL: https://webport.it.pitea.se/api
           API_KEY: 
           API_CA_CERT: ${SYS_API_CA_CERT}
         approle: ace-anomaly-approle
