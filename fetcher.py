@@ -19,7 +19,7 @@ def fetch_sensor_data(tag_name, api_key, window_minutes=60):
     formatted_start = urllib.parse.quote(start_time.replace(microsecond=0).isoformat())
     formatted_end = urllib.parse.quote(end_time.replace(microsecond=0).isoformat())
 
-    logger.info(f"Fetching data for tag '{tag_name}' from {formatted_start} to {formatted_end}")
+    logger.info(f"Fetching data for tag '{tag_name}' from {start_time.strftime('%Y-%m-%d %H:%M:%S %Z')} to {end_time.strftime('%Y-%m-%d %H:%M:%S %Z')}")
 
     url = f"{BASE_URL}/v1/trend/history?tag={tag_name}&start={formatted_start}&end={formatted_end}"
     headers = {

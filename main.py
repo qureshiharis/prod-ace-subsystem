@@ -36,7 +36,7 @@ class VolgaPublisher:
             )
             logger.info(f"[VolgaPublisher] Logged in successfully.")
             topic = Topic.local(self.topic_name)
-            opts = CreateOptions.create(fmt='json', persistence='disk', replication_factor=1)
+            opts = CreateOptions.create(fmt='json', persistence='disk', replication_factor=1, num_chunks=10)
             self.producer = await Producer(
                 session=self.session,
                 topic=topic,
