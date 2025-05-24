@@ -1,24 +1,30 @@
-name: 1473-ventilation-lb-01
-version: "1.0"
+name: 1473-ventilation-lb-03
+version: "1.1"
 services:
-  - name: 1473-ventilation-hist
+  - name: 1473-ventilation-lb-03
     mode: replicated
     replicas: 1
     placement:
       match-host-labels: function = ventilation
     share-pid-namespace: false
+    variables:
+      - name: API_KEY
+        value-from-vault-secret:
+          vault: ace-smart-bms-vault
+          secret: credentials
+          key: API_KEY
     containers:
-      - name: 1473-ventilation-lb-01-container
+      - name: 1473-ventilation-lb-03-container
         mounts: []
         container-log-size: 100 MB
         container-log-archive: false
         shutdown-timeout: 10s
         image: index.docker.io/topnot/prod-ace-subsystem:v2.3
         env:
-          VOLGA_TOPIC: 1473-ventilation-lb-01
-          TAG_PAIRS: 
+          VOLGA_TOPIC: 1473-ventilation-lb-03
+          TAG_PAIRS: 1473_01_LB03_GT11_PV,1473_01_LB03_GT11_CSP,1473_01_LB03_GP12_PV,1473_01_LB03_GP12_CSP,1473_01_LB03_GP11_PV,1473_01_LB03_GP11_CSP
           SECRET_ID: ${SYS_APPROLE_SECRET_ID}
-          ROLE_ID: 
+          ROLE_ID: dbb4ec8a-bc2a-41a2-b13a-922da199c044
           HISTORICAL_MODE: "true"
           HISTORICAL_DATA_FETCH_FREQUENCY_DAYS: "7"
           HISTORICAL_DATA_DURATION_MINUTES: "43200"
@@ -26,7 +32,7 @@ services:
           FETCH_INTERVAL: "300"
           BUFFER_HOURS: "24"
           BASE_URL: https://webport.it.pitea.se/api
-          API_KEY: 
+          API_KEY: ${API_KEY}
           API_CA_CERT: ${SYS_API_CA_CERT}
         approle: ace-anomaly-approle
         on-mounted-file-change:
